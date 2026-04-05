@@ -116,7 +116,7 @@ function renderDashboard() {
     tb.innerHTML = DATA.reservations.filter(r => r.status === 'Upcoming' || r.status === 'Active').map(r => `
         <tr><td>${r.guest}</td><td>${r.room}</td><td>${r.source}</td>
         <td><span class="badge badge-${r.status === 'Upcoming' ? 'warning' : 'success'}">${r.status}</span></td>
-        <td><button class="btn btn-outline btn-sm">View</button></td></tr>
+        <td><button class="btn btn-outline btn-sm" onclick="editReservation('${r.ref}')">View</button></td></tr>
     `).join('');
 
     document.getElementById('dashboard-activity').innerHTML = `
@@ -137,13 +137,40 @@ function renderReservations(filter = 'All') {
             <td><span class="badge badge-${getBadge(r.status)}">${r.status}</span></td>
             <td>
                 <div class="flex gap-2">
-                    <button class="btn btn-outline btn-sm" onclick="showToast('Loading booking...')">Edit</button>
+                    <button class="btn btn-outline btn-sm" onclick="editReservation('${r.ref}')">Edit</button>
                     ${r.status!=='Cancelled' ? `<button class="btn btn-gold btn-sm" onclick="openInvoice('${r.ref}')">Invoice</button>` : ''}
                 </div>
             </td>
         </tr>
     `).join('');
     updateCurrencyDisplays();
+}
+
+function openNewReservation() {
+    document.querySelector('#modal-reservation .modal-header h2').textContent = 'New Reservation';
+    const inputs = document.querySelector('#modal-reservation').querySelectorAll('.input-field');
+    inputs[0].value = ''; // Guest Name
+    inputs[5].value = '1'; // Number of guests
+    document.querySelector('#modal-reservation .btn-primary').textContent = 'Create Booking';
+    document.querySelector('#modal-reservation .btn-primary').onclick = function() {
+        closeModalAndToast('Reservation Confirmed', 'success', 'modal-reservation');
+    };
+    openModal('modal-reservation');
+}
+
+function editReservation(ref) {
+    const r = DATA.reservations.find(x => x.ref === ref);
+    if(r) {
+        document.querySelector('#modal-reservation .modal-header h2').textContent = `Edit Reservation: ${ref}`;
+        const inputs = document.querySelector('#modal-reservation').querySelectorAll('.input-field');
+        inputs[0].value = r.guest;
+        
+        document.querySelector('#modal-reservation .btn-primary').textContent = 'Save Changes';
+        document.querySelector('#modal-reservation .btn-primary').onclick = function() {
+            closeModalAndToast('Reservation Updated', 'success', 'modal-reservation');
+        };
+        openModal('modal-reservation');
+    }
 }
 
 function renderRooms() {
@@ -340,8 +367,8 @@ document.querySelectorAll('.tab').forEach(tab => {
 
 // Topbar dynamic actions helper
 const pageActionsConfig = {
-    'dashboard': '<button class="btn btn-primary" onclick="openModal(\'modal-reservation\')">+ New Booking</button>',
-    'reservations': '<button class="btn btn-primary" onclick="openModal(\'modal-reservation\')">+ New Booking</button>',
+    'dashboard': '<button class="btn btn-primary" onclick="openNewReservation()">+ New Booking</button>',
+    'reservations': '<button class="btn btn-primary" onclick="openNewReservation()">+ New Booking</button>',
     'guests': '<button class="btn btn-primary" onclick="openModal(\'modal-guest\')">+ Add Guest</button>'
 };
 
