@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HavenOS - Hotel Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS_INJECT_HERE */
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-box">H</div>
+                    <span class="hotel-name-display text-logo">HavenOS</span>
+                </div>
+            </div>
+            
+            <div class="sidebar-scroll">
+                <nav class="sidebar-nav">
+                    <div class="nav-section">
+                        <div class="nav-label">OVERVIEW</div>
+                        <a href="#" class="nav-item active" data-target="dashboard"><span class="icon">📊</span><span class="text">Dashboard</span></a>
+                        <a href="#" class="nav-item" data-target="analytics"><span class="icon">📈</span><span class="text">Analytics</span></a>
+                    </div>
+                    
+                    <div class="nav-section">
+                        <div class="nav-label">FRONT DESK</div>
+                        <a href="#" class="nav-item" data-target="reservations"><span class="icon">📅</span><span class="text">Reservations</span></a>
+                        <a href="#" class="nav-item" data-target="checkinout"><span class="icon">🔑</span><span class="text">Check-in / Out</span></a>
+                        <a href="#" class="nav-item" data-target="rooms"><span class="icon">🚪</span><span class="text">Rooms</span></a>
+                        <a href="#" class="nav-item" data-target="guests"><span class="icon">🧑</span><span class="text">Guests</span></a>
+                    </div>
+
+                    <div class="nav-section">
+                        <div class="nav-label">OPERATIONS</div>
+                        <a href="#" class="nav-item" data-target="housekeeping"><span class="icon">🧹</span><span class="text">Housekeeping</span></a>
+                        <a href="#" class="nav-item" data-target="restaurant"><span class="icon">🍽️</span><span class="text">Restaurant & POS</span></a>
+                    </div>
+                    
+                    <div class="nav-section">
+                        <div class="nav-label">FINANCE & ADMIN</div>
+                        <a href="#" class="nav-item" data-target="billing"><span class="icon">💳</span><span class="text">Billing & Invoices</span></a>
+                        <a href="#" class="nav-item" data-target="staff"><span class="icon">👩‍💼</span><span class="text">Staff</span></a>
+                        <a href="#" class="nav-item" data-target="notifications">
+                            <span class="icon">🔔</span>
+                            <span class="text">Notifications</span>
+                            <span class="badge red notification-badge" style="display:none">0</span>
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="user-profile">
+                    <div class="avatar">SN</div>
+                    <div class="user-info">
+                        <div class="user-name">Sipho Ndlovu</div>
+                        <div class="user-role">General Manager</div>
+                    </div>
+                </div>
+                <button class="icon-btn settings-trigger" title="Settings" data-target="settings-modal flex-none">⚙️</button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button id="sidebar-toggle" class="icon-btn">☰</button>
+                    <h1 id="page-title" class="page-title">Dashboard</h1>
+                </div>
+                <div class="topbar-right" id="topbar-actions">
+                    <!-- Dynamic actions -->
+                </div>
+            </header>
+
+            <div class="page-container" id="page-container">
+                <!-- ALL PAGES INJECTED HERE BY JS OR HARDCODED -->
+                
+                <!-- DASHBOARD -->
+                <section id="page-dashboard" class="page active">
+                    <div class="kpi-grid" id="dashboard-kpis"></div>
+                    <div class="dashboard-grid">
+                        <div class="card col-span-2">
+                            <h3 class="card-title">Weekly Revenue Overview</h3>
+                            <div class="bar-chart" id="dashboard-revenue-chart"></div>
+                        </div>
+                        <div class="card col-span-1">
+                            <h3 class="card-title">Room Status</h3>
+                            <div class="donut-chart-container" id="dashboard-room-status"></div>
+                            <div class="legend" id="dashboard-room-legend"></div>
+                        </div>
+                        <div class="card col-span-2">
+                            <h3 class="card-title">Today's Check-ins</h3>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-dashboard-checkins">
+                                    <thead><tr><th>Guest</th><th>Room</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card col-span-1">
+                            <h3 class="card-title">Live Activity</h3>
+                            <ul class="activity-feed" id="dashboard-activity"></ul>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- RESERVATIONS -->
+                <section id="page-reservations" class="page">
+                    <div class="card full-height">
+                        <div class="tabs" id="reservations-tabs">
+                            <button class="tab active" data-filter="All">All</button>
+                            <button class="tab" data-filter="Upcoming">Upcoming</button>
+                            <button class="tab" data-filter="Active">Active</button>
+                            <button class="tab" data-filter="Checked Out">Checked Out</button>
+                            <button class="tab" data-filter="Cancelled">Cancelled</button>
+                        </div>
+                        <div class="table-responsive mt-3">
+                            <table class="data-table" id="table-reservations">
+                                <thead><tr><th>Ref#</th><th>Guest</th><th>Room</th><th>Dates</th><th>Nights</th><th>Total</th><th>Source</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ROOMS -->
+                <section id="page-rooms" class="page">
+                    <div class="card">
+                        <div class="room-legend">
+                            <span class="legend-item"><span class="dot g-available"></span>Available</span>
+                            <span class="legend-item"><span class="dot g-occupied"></span>Occupied</span>
+                            <span class="legend-item"><span class="dot g-cleaning"></span>Cleaning</span>
+                            <span class="legend-item"><span class="dot g-reserved"></span>Reserved</span>
+                            <span class="legend-item"><span class="dot g-maintenance"></span>Maintenance</span>
+                        </div>
+                        <div class="rooms-grid mt-4" id="rooms-grid"></div>
+                    </div>
+                </section>
+
+                <!-- GUESTS -->
+                <section id="page-guests" class="page">
+                    <div class="card full-height">
+                        <div class="search-bar mb-3">
+                            <input type="text" id="guest-search" placeholder="Search guests by name, email or phone..." class="input-field w-full">
+                        </div>
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-guests">
+                                <thead><tr><th>Guest</th><th>Contact</th><th>Stays</th><th>Total Spent</th><th>Type</th><th>Last Visit</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- CHECK IN/OUT -->
+                <section id="page-checkinout" class="page">
+                    <div class="split-layout">
+                        <!-- Check In Panel -->
+                        <div class="card split-panel">
+                            <h2 class="card-title text-navy">Check-In Flow</h2>
+                            <div class="stepper">
+                                <div class="step active" data-step="1"><div class="step-circle">1</div><div class="step-text">Find Res</div></div>
+                                <div class="step" data-step="2"><div class="step-circle">2</div><div class="step-text">Verify</div></div>
+                                <div class="step" data-step="3"><div class="step-circle">3</div><div class="step-text">Issue Key</div></div>
+                            </div>
+                            <div class="step-content mt-4" id="checkin-step-1">
+                                <div class="form-group">
+                                    <label>Reservation Ref or Guest Name</label>
+                                    <input type="text" class="input-field" value="RES-7023">
+                                </div>
+                                <button class="btn btn-primary w-full mt-3" onclick="nextCheckinStep(2)">Locate Booking</button>
+                            </div>
+                            <div class="step-content mt-4" id="checkin-step-2" style="display:none;">
+                                <div class="booking-summary mb-3 p-3 bg-light rounded">
+                                    <strong>Sarah Jenkins</strong><br>
+                                    Deluxe Suite - Room 302<br>
+                                    2 Nights (Balance: <span class="currency-display"></span>0.00)
+                                </div>
+                                <div class="form-group mb-3">
+                                    <label>ID / Passport Number Verified</label>
+                                    <input type="text" class="input-field" placeholder="Enter ID number">
+                                </div>
+                                <div class="flex-actions">
+                                    <button class="btn btn-outline" onclick="nextCheckinStep(1)">Back</button>
+                                    <button class="btn btn-primary" onclick="nextCheckinStep(3)">Confirm Details</button>
+                                </div>
+                            </div>
+                            <div class="step-content mt-4" id="checkin-step-3" style="display:none;">
+                                <div class="alert alert-success mb-3">Ready to issue key for Room 302.</div>
+                                <button class="btn btn-gold w-full" onclick="completeCheckin()">Complete Check-In & Issue Key</button>
+                            </div>
+                        </div>
+
+                        <!-- Check Out Panel -->
+                        <div class="card split-panel">
+                            <h2 class="card-title text-gold">Check-Out Express</h2>
+                            <div class="form-group mt-4">
+                                <label>Select Room to Check Out</label>
+                                <select class="input-field" id="checkout-room-select">
+                                    <option value="">Select Room...</option>
+                                    <option value="101">101 - Johan van der Merwe</option>
+                                    <option value="205">205 - Aisha Patel</option>
+                                </select>
+                            </div>
+                            <div id="checkout-details" style="display:none;" class="mt-4 border-top pt-4">
+                                <h4>Bill Breakdown</h4>
+                                <table class="breakdown-table w-full mt-2 mb-4">
+                                    <tr><td>Room Rate (2 Nights)</td><td class="text-right"><span class="currency-display"></span>2400.00</td></tr>
+                                    <tr><td>Restaurant (Dinner x2)</td><td class="text-right"><span class="currency-display"></span>850.00</td></tr>
+                                    <tr class="fw-bold"><td>Total Outstanding</td><td class="text-right text-danger"><span class="currency-display"></span>3250.00</td></tr>
+                                </table>
+                                <button class="btn btn-primary w-full" onclick="processCheckout()">Process Payment & Check-Out</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- HOUSEKEEPING -->
+                <section id="page-housekeeping" class="page">
+                    <div class="kanban-board mt-2">
+                        <div class="kanban-col">
+                            <h3 class="kanban-title"><span class="dot g-reserved"></span> Pending</h3>
+                            <div class="kanban-list" id="kb-pending"></div>
+                        </div>
+                        <div class="kanban-col">
+                            <h3 class="kanban-title"><span class="dot g-occupied"></span> In Progress</h3>
+                            <div class="kanban-list" id="kb-progress"></div>
+                        </div>
+                        <div class="kanban-col">
+                            <h3 class="kanban-title"><span class="dot g-cleaning"></span> Inspecting</h3>
+                            <div class="kanban-list" id="kb-inspect"></div>
+                        </div>
+                        <div class="kanban-col">
+                            <h3 class="kanban-title"><span class="dot g-available"></span> Done Today</h3>
+                            <div class="kanban-list" id="kb-done"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- RESTAURANT & POS -->
+                <section id="page-restaurant" class="page">
+                    <div class="split-layout">
+                        <div class="card split-panel">
+                            <h2 class="card-title">Live Orders</h2>
+                            <div class="table-responsive">
+                                <table class="data-table" id="table-pos-orders">
+                                    <thead><tr><th>Table/Room</th><th>Items</th><th>Total</th><th>Status</th></tr></thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="card split-panel">
+                            <h2 class="card-title text-gold">New Order</h2>
+                            <div class="form-group mt-3">
+                                <label>Charge To</label>
+                                <select class="input-field" id="pos-charge-to">
+                                    <option>Walk-in (Table 12)</option>
+                                    <option>Room 101 - Johan van der Merwe</option>
+                                    <option>Room 302 - Sarah Jenkins</option>
+                                </select>
+                            </div>
+                            <div class="form-group mt-3">
+                                <label>Add Item</label>
+                                <select class="input-field" id="pos-add-item" onchange="addPosItem(this)">
+                                    <option value="">Select Menu Item...</option>
+                                    <option value="Steak Frites|250.00">Steak Frites - <span class="currency-display"></span>250.00</option>
+                                    <option value="Caesar Salad|120.00">Caesar Salad - <span class="currency-display"></span>120.00</option>
+                                    <option value="House Wine (Glass)|85.00">House Wine (Glass) - <span class="currency-display"></span>85.00</option>
+                                </select>
+                            </div>
+                            <div class="pos-cart mt-4 p-3 bg-light rounded">
+                                <ul id="pos-cart-items" class="list-none mb-3"></ul>
+                                <div class="flex justify-between fw-bold mb-2"><span>Subtotal</span><span><span class="currency-display"></span><span id="pos-subtotal">0.00</span></span></div>
+                                <div class="flex justify-between text-muted text-sm mb-3"><span>VAT (<span class="vat-display"></span>%)</span><span><span class="currency-display"></span><span id="pos-vat">0.00</span></span></div>
+                                <div class="flex justify-between fw-bold text-lg mb-4 text-navy"><span>Total</span><span><span class="currency-display"></span><span id="pos-total">0.00</span></span></div>
+                                <button class="btn btn-gold w-full" onclick="submitPosOrder()">Place Order</button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- BILLING & INVOICES -->
+                <section id="page-billing" class="page">
+                    <div class="kpi-grid" id="billing-kpis"></div>
+                    <div class="card mt-4 full-height">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-billing">
+                                <thead><tr><th>Invoice#</th><th>Date</th><th>Guest/Entity</th><th>Amount</th><th>VAT</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STAFF -->
+                <section id="page-staff" class="page">
+                    <div class="card full-height">
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-staff">
+                                <thead><tr><th>Staff Member</th><th>Role</th><th>Department</th><th>Shift</th><th>Status</th></tr></thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ANALYTICS -->
+                <section id="page-analytics" class="page">
+                    <div class="kpi-grid" id="analytics-kpis"></div>
+                    <div class="dashboard-grid mt-4">
+                        <div class="card col-span-2">
+                            <h3 class="card-title">Monthly Revenue Trend</h3>
+                            <div class="bar-chart" id="analytics-revenue-chart"></div>
+                        </div>
+                        <div class="card col-span-1">
+                            <h3 class="card-title">Booking Sources</h3>
+                            <div id="analytics-sources" class="progress-list mt-4"></div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- NOTIFICATIONS -->
+                <section id="page-notifications" class="page">
+                    <div class="card full-height p-0">
+                        <div class="p-4 border-bottom flex justify-between align-center">
+                            <h3 class="card-title m-0">Recent Activity</h3>
+                            <button class="btn btn-outline btn-sm" onclick="markAllNotificationsRead()">Mark All Read</button>
+                        </div>
+                        <div class="feed-list flex-col" id="notifications-list"></div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- MODALS -->
+    <!-- New Reservation Modal -->
+    <div class="modal" id="modal-reservation">
+        <div class="modal-content md">
+            <div class="modal-header">
+                <h2>New Reservation</h2>
+                <button class="close-modal icon-btn">✖</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group col-span-2"><label>Guest Name</label><input type="text" class="input-field" placeholder="Full Name"></div>
+                    <div class="form-group"><label>Email</label><input type="email" class="input-field" placeholder="Email Address"></div>
+                    <div class="form-group"><label>Phone</label><input type="text" class="input-field" placeholder="Phone Number"></div>
+                    <div class="form-group"><label>Check-In Date</label><input type="date" class="input-field"></div>
+                    <div class="form-group"><label>Check-Out Date</label><input type="date" class="input-field"></div>
+                    <div class="form-group"><label>Room Type</label><select class="input-field"><option>Standard</option><option>Deluxe</option><option>Suite</option></select></div>
+                    <div class="form-group"><label>Number of Guests</label><input type="number" class="input-field" value="1" min="1"></div>
+                    <div class="form-group"><label>Rate / Night</label>
+                        <div class="input-currency-wrapper">
+                            <span class="currency-prefix currency-display"></span>
+                            <input type="number" class="input-field with-prefix" value="1200.00">
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Source</label><select class="input-field"><option>Direct</option><option>Booking.com</option><option>Corporate</option></select></div>
+                    <div class="form-group col-span-2"><label>Special Requests</label><textarea class="input-field h-24" placeholder="Flight details, allergies..."></textarea></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModalAndToast('Reservation Confirmed', 'success', 'modal-reservation')">Create Booking</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Guest Modal -->
+    <div class="modal" id="modal-guest">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add New Guest</h2>
+                <button class="close-modal icon-btn">✖</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group col-span-2"><label>Full Name</label><input type="text" class="input-field"></div>
+                    <div class="form-group"><label>Email</label><input type="email" class="input-field"></div>
+                    <div class="form-group"><label>Phone</label><input type="text" class="input-field"></div>
+                    <div class="form-group"><label>ID/Passport</label><input type="text" class="input-field"></div>
+                    <div class="form-group"><label>Nationality</label><input type="text" class="input-field"></div>
+                    <div class="form-group col-span-2"><label>Guest Type</label><select class="input-field"><option>Standard</option><option>VIP</option><option>Corporate</option></select></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" onclick="closeModalAndToast('Guest Profile Created', 'success', 'modal-guest')">Save Profile</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal" id="modal-invoice">
+        <div class="modal-content lg">
+            <div class="modal-header" style="background:var(--navy); color:white;">
+                <h2 style="color:white;"><span class="hotel-name-display">HavenOS</span> | Invoice <span id="inv-ref"></span></h2>
+                <button class="close-modal icon-btn" style="color:white;">✖</button>
+            </div>
+            <div class="modal-body print-area" id="invoice-print-area">
+                <div class="flex justify-between mb-4 mt-2 border-bottom pb-4">
+                    <div>
+                        <h1 class="text-navy hotel-name-display m-0">HavenOS</h1>
+                        <p class="text-muted mt-1 hotel-address-display">124 Beach Road, Sea Point, Cape Town</p>
+                    </div>
+                    <div class="text-right">
+                        <strong class="text-lg">TAX INVOICE</strong>
+                        <p>Date: <span id="inv-date"></span></p>
+                        <span class="badge badge-success mt-1">PAID</span>
+                    </div>
+                </div>
+                <div class="flex mb-4">
+                    <div class="w-half">
+                        <p class="text-sm text-muted uppercase">Bill To:</p>
+                        <strong id="inv-guest" class="text-lg"></strong>
+                    </div>
+                    <div class="w-half text-right">
+                        <p class="text-sm text-muted uppercase">Stay Details:</p>
+                        <span id="inv-room"></span> | <span id="inv-dates"></span>
+                    </div>
+                </div>
+                <table class="data-table w-full mb-4">
+                    <thead><tr><th>Description</th><th class="text-right">Amount</th></tr></thead>
+                    <tbody id="inv-lines"></tbody>
+                </table>
+                <div class="flex justify-end p-4 bg-light rounded">
+                    <div class="w-half text-right">
+                        <div class="flex justify-between text-muted mb-2"><span>Subtotal:</span><span><span class="currency-display"></span><span id="inv-subtotal"></span></span></div>
+                        <div class="flex justify-between text-muted mb-2 border-bottom pb-2"><span>VAT (<span class="vat-display"></span>%):</span><span><span class="currency-display"></span><span id="inv-vat"></span></span></div>
+                        <div class="flex justify-between text-xl fw-bold text-navy mt-2"><span>Total:</span><span><span class="currency-display"></span><span id="inv-total"></span></span></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="window.print()">Download PDF</button>
+                <button class="btn btn-gold" onclick="closeModalAndToast('Invoice sent to guest email', 'success', 'modal-invoice')">Send to Guest</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div class="modal" id="modal-settings">
+        <div class="modal-content md">
+            <div class="modal-header">
+                <h2>System Settings</h2>
+                <button class="close-modal icon-btn">✖</button>
+            </div>
+            <div class="modal-body max-h-70 overflow-auto">
+                <div class="settings-section mb-4 pb-4 border-bottom">
+                    <h3 class="mb-3 text-gold">Localization & Branding</h3>
+                    <div class="form-grid">
+                        <div class="form-group col-span-2"><label>Hotel Name</label><input type="text" id="setting-name" class="input-field" value="HavenOS"></div>
+                        <div class="form-group"><label>Currency Symbol</label><input type="text" id="setting-currency" class="input-field" value="R"></div>
+                        <div class="form-group"><label>VAT Rate (%)</label><input type="number" id="setting-vat" class="input-field" value="15"></div>
+                        <div class="form-group"><label>Default Check-in Time</label><input type="time" id="setting-checkin" class="input-field" value="14:00"></div>
+                        <div class="form-group col-span-2"><label>Address</label><textarea id="setting-address" class="input-field h-24">124 Beach Road, Sea Point, Cape Town</textarea></div>
+                    </div>
+                </div>
+                
+                <div class="settings-section mb-4 pb-4 border-bottom">
+                    <h3 class="mb-3 text-gold">Theme Swatches</h3>
+                    <div class="theme-picker">
+                        <button class="swatch active" data-theme="luxury" style="background:#0D1B2A; border-color:#C9A84C;" title="Luxury Navy"></button>
+                        <button class="swatch" data-theme="emerald" style="background:#064E3B; border-color:#FBBF24;" title="Emerald"></button>
+                        <button class="swatch" data-theme="crimson" style="background:#7F1D1D; border-color:#E5E7EB;" title="Crimson"></button>
+                        <button class="swatch" data-theme="midnight" style="background:#0F172A; border-color:#B45309;" title="Midnight"></button>
+                        <button class="swatch" data-theme="purple" style="background:#4C1D95; border-color:#FCD34D;" title="Royal Purple"></button>
+                        <button class="swatch" data-theme="ocean" style="background:#042F2E; border-color:#F43F5E;" title="Ocean Coral"></button>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3 class="mb-3 text-gold">Modules & Automation</h3>
+                    <div class="toggle-row"><div class="toggle-label">Enable Email Notifications</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                    <div class="toggle-row"><div class="toggle-label">WhatsApp Alerts</div><label class="switch"><input type="checkbox"><span class="slider"></span></label></div>
+                    <div class="toggle-row"><div class="toggle-label">Restaurant/POS Module</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                    <div class="toggle-row"><div class="toggle-label">Housekeeping Kanban</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                    <div class="toggle-row"><div class="toggle-label">Auto-Invoice on Checkout</div><label class="switch"><input type="checkbox" checked><span class="slider"></span></label></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline close-modal">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script>
+        /* JS_INJECT_HERE */
+    </script>
+</body>
+</html>
