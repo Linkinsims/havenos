@@ -138,6 +138,7 @@ function renderReservations(filter = 'All') {
             <td>
                 <div class="flex gap-2">
                     <button class="btn btn-outline btn-sm" onclick="editReservation('${r.ref}')">Edit</button>
+                    <button class="btn btn-outline btn-sm text-danger" onclick="deleteReservation('${r.ref}')">Delete</button>
                     ${r.status!=='Cancelled' ? `<button class="btn btn-gold btn-sm" onclick="openInvoice('${r.ref}')">Invoice</button>` : ''}
                 </div>
             </td>
@@ -149,10 +150,34 @@ function renderReservations(filter = 'All') {
 function openNewReservation() {
     document.querySelector('#modal-reservation .modal-header h2').textContent = 'New Reservation';
     const inputs = document.querySelector('#modal-reservation').querySelectorAll('.input-field');
-    inputs[0].value = ''; // Guest Name
+    const textareas = document.querySelector('#modal-reservation').querySelectorAll('textarea');
+    
+    // Reset inputs
+    inputs.forEach(i => i.value = '');
+    textareas.forEach(t => t.value = '');
     inputs[5].value = '1'; // Number of guests
+    inputs[6].value = '1200.00'; // Rate
+
     document.querySelector('#modal-reservation .btn-primary').textContent = 'Create Booking';
     document.querySelector('#modal-reservation .btn-primary').onclick = function() {
+        const name = inputs[0].value;
+        if(!name) return showToast('Guest Name is required', 'error');
+
+        const newRes = {
+            ref: `RES-${Math.floor(7000 + Math.random() * 999)}`,
+            guest: name,
+            room: inputs[4].value || 'TBD',
+            dates: `${inputs[2].value} - ${inputs[3].value}`,
+            nights: 1, // Simplified
+            total: parseFloat(inputs[6].value) || 0,
+            source: inputs[7].value,
+            status: 'Upcoming'
+        };
+
+        DATA.reservations.unshift(newRes);
+        renderReservations();
+        renderDashboard();
+        renderBilling();
         closeModalAndToast('Reservation Confirmed', 'success', 'modal-reservation');
     };
     openModal('modal-reservation');
@@ -163,13 +188,33 @@ function editReservation(ref) {
     if(r) {
         document.querySelector('#modal-reservation .modal-header h2').textContent = `Edit Reservation: ${ref}`;
         const inputs = document.querySelector('#modal-reservation').querySelectorAll('.input-field');
+        
         inputs[0].value = r.guest;
+        inputs[6].value = r.total;
+        inputs[7].value = r.source;
         
         document.querySelector('#modal-reservation .btn-primary').textContent = 'Save Changes';
         document.querySelector('#modal-reservation .btn-primary').onclick = function() {
+            r.guest = inputs[0].value;
+            r.total = parseFloat(inputs[6].value) || 0;
+            r.source = inputs[7].value;
+            
+            renderReservations();
+            renderDashboard();
+            renderBilling();
             closeModalAndToast('Reservation Updated', 'success', 'modal-reservation');
         };
         openModal('modal-reservation');
+    }
+}
+
+function deleteReservation(ref) {
+    if(confirm(`Are you sure you want to delete reservation ${ref}?`)) {
+        DATA.reservations = DATA.reservations.filter(r => r.ref !== ref);
+        renderReservations();
+        renderDashboard();
+        renderBilling();
+        showToast('Reservation deleted successfully', 'success');
     }
 }
 
