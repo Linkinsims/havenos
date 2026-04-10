@@ -79,6 +79,68 @@ document.getElementById('sidebar-toggle').addEventListener('click', () => {
 
 document.querySelectorAll('.settings-trigger').forEach(b => b.addEventListener('click', () => openModal('modal-settings')));
 
+// Save Settings
+function saveSettings() {
+    STATE.hotelName = document.getElementById('setting-name').value || 'My Hotel';
+    STATE.currency = document.getElementById('setting-currency').value || '$';
+    STATE.vat = parseFloat(document.getElementById('setting-vat').value) || 0;
+    STATE.checkinTime = document.getElementById('setting-checkin').value || '14:00';
+    
+    updateHotelName();
+    updateCurrencyDisplays();
+    document.querySelectorAll('.vat-display').forEach(e => e.textContent = STATE.vat);
+    
+    closeModalAndToast('Settings Saved Successfully', 'success', 'modal-settings');
+}
+
+// Create Reservation
+function createNewReservation() {
+    const inputs = document.querySelector('#modal-reservation').querySelectorAll('.input-field');
+    const newRef = 'RES-' + (Math.floor(Math.random() * 9000) + 1000);
+    
+    const newRes = {
+        ref: newRef,
+        guest: inputs[0].value || 'Guest',
+        room: inputs[5].value || '101',
+        dates: (inputs[3].value || '2024-01-01') + ' - ' + (inputs[4].value || '2024-01-02'),
+        nights: 1,
+        total: parseFloat(inputs[6].value) || 0,
+        source: inputs[7].value || 'Direct',
+        status: 'Upcoming'
+    };
+    
+    DATA.reservations.push(newRes);
+    renderReservations();
+    renderDashboard();
+    renderBilling();
+    closeModalAndToast('Reservation Created: ' + newRef, 'success', 'modal-reservation');
+}
+
+// Add Room
+function addRoom(num, type, floor) {
+    DATA.rooms.push({ num: num, type: type, status: 'available', floor: floor });
+    renderRooms();
+    renderDashboard();
+}
+
+// Add Guest
+function addGuest() {
+    const inputs = document.querySelector('#modal-guest').querySelectorAll('.input-field');
+    const newGuest = {
+        name: inputs[0].value || 'New Guest',
+        email: inputs[1].value || '',
+        phone: inputs[2].value || '',
+        stays: 0,
+        total: 0,
+        type: inputs[5].value || 'Standard',
+        last: 'Never'
+    };
+    
+    DATA.guests.push(newGuest);
+    renderGuests();
+    closeModalAndToast('Guest Added', 'success', 'modal-guest');
+}
+
 // Page Renderers
 function renderDashboard() {
     const totalRooms = DATA.rooms.length;
