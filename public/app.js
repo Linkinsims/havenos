@@ -4,36 +4,24 @@ const STATE = {
 };
 
 const DATA = {
-    reservations: [
-        { ref: 'RES-7023', guest: 'Sarah Jenkins', room: '302', dates: '15 Apr - 17 Apr', nights: 2, total: 3250.00, source: 'Direct', status: 'Upcoming' },
-        { ref: 'RES-7024', guest: 'Johan van der Merwe', room: '101', dates: '14 Apr - 18 Apr', nights: 4, total: 4800.00, source: 'Booking.com', status: 'Active' },
-        { ref: 'RES-7025', guest: 'Noluthando Nkosi', room: '205', dates: '10 Apr - 15 Apr', nights: 5, total: 6000.00, source: 'Corporate', status: 'Checked Out' },
-        { ref: 'RES-7026', guest: 'Aisha Patel', room: '108', dates: '16 Apr - 19 Apr', nights: 3, total: 4200.00, source: 'Direct', status: 'Cancelled' }
-    ],
+    reservations: [],
     rooms: [
-        { num: '101', type: 'Standard', status: 'occupied', floor: 1 }, { num: '102', type: 'Standard', status: 'available', floor: 1 },
-        { num: '103', type: 'Deluxe', status: 'cleaning', floor: 1 }, { num: '104', type: 'Deluxe', status: 'available', floor: 1 },
-        { num: '105', type: 'Suite', status: 'reserved', floor: 1 }, { num: '201', type: 'Standard', status: 'available', floor: 2 },
-        { num: '202', type: 'Standard', status: 'occupied', floor: 2 }, { num: '203', type: 'Deluxe', status: 'available', floor: 2 },
-        { num: '204', type: 'Deluxe', status: 'maintenance', floor: 2 }, { num: '205', type: 'Suite', status: 'occupied', floor: 2 },
-        { num: '301', type: 'Suite', status: 'available', floor: 3 }, { num: '302', type: 'Suite', status: 'reserved', floor: 3 }
+        { num: '101', type: 'Standard', status: 'available', floor: 1 },
+        { num: '102', type: 'Standard', status: 'available', floor: 1 },
+        { num: '103', type: 'Deluxe', status: 'available', floor: 1 },
+        { num: '104', type: 'Deluxe', status: 'available', floor: 1 },
+        { num: '105', type: 'Suite', status: 'available', floor: 1 },
+        { num: '201', type: 'Standard', status: 'available', floor: 2 },
+        { num: '202', type: 'Standard', status: 'available', floor: 2 },
+        { num: '203', type: 'Deluxe', status: 'available', floor: 2 },
+        { num: '204', type: 'Deluxe', status: 'available', floor: 2 },
+        { num: '205', type: 'Suite', status: 'available', floor: 2 },
+        { num: '301', type: 'Suite', status: 'available', floor: 3 },
+        { num: '302', type: 'Suite', status: 'available', floor: 3 }
     ],
-    guests: [
-        { name: 'Sarah Jenkins', email: 's.jenkins@mail.com', phone: '082 555 1234', stays: 1, total: 3250, type: 'Standard', last: 'Pending' },
-        { name: 'Johan van der Merwe', email: 'johan@corp.co.za', phone: '071 234 5678', stays: 12, total: 45000, type: 'Corporate', last: '2 weeks ago' },
-        { name: 'Noluthando Nkosi', email: 'nolu@gmail.com', phone: '065 987 6543', stays: 4, total: 18000, type: 'VIP', last: '1 month ago' },
-        { name: 'Sipho Khumalo', email: 'skhumalo@mweb.co.za', phone: '083 111 2222', stays: 2, total: 5400, type: 'Standard', last: '3 months ago' }
-    ],
-    staff: [
-        { name: 'Grace Mokoena', role: 'Front Desk', dept: 'Reception', shift: '08:00 - 16:00', status: 'On Duty' },
-        { name: 'Pieter Steyn', role: 'Concierge', dept: 'Guest Services', shift: '10:00 - 18:00', status: 'On Duty' },
-        { name: 'Linda Dlamini', role: 'Housekeeping Supervisor', dept: 'Housekeeping', shift: '07:00 - 15:00', status: 'On Duty' },
-        { name: 'David Smith', role: 'Bartender', dept: 'Restaurant', shift: '16:00 - 00:00', status: 'Off Duty' }
-    ],
-    posOrders: [
-        { ref: 'Ord-441', target: 'Room 101', items: 3, total: 420.00, status: 'Preparing' },
-        { ref: 'Ord-442', target: 'Table 4', items: 2, total: 180.00, status: 'Delivered' }
-    ],
+    guests: [],
+    staff: [],
+    posOrders: [],
     posCart: []
 };
 
@@ -93,23 +81,37 @@ document.querySelectorAll('.settings-trigger').forEach(b => b.addEventListener('
 
 // Page Renderers
 function renderDashboard() {
+    const totalRooms = DATA.rooms.length;
+    const occupied = DATA.rooms.filter(r => r.status === 'occupied').length;
+    const occupancy = totalRooms ? Math.round((occupied / totalRooms) * 100) : 0;
+    const upcomingCheckins = DATA.reservations.filter(r => r.status === 'Upcoming').length;
+    const activeCheckins = DATA.reservations.filter(r => r.status === 'Active').length;
+    const roomsToClean = DATA.rooms.filter(r => r.status === 'cleaning').length;
+    const totalRevenue = DATA.reservations.reduce((sum, r) => sum + (r.total || 0), 0);
+    
     document.getElementById('dashboard-kpis').innerHTML = `
-        <div class="kpi-card"><div class="kpi-icon">🛏️</div><div><div class="kpi-value">78%</div><div class="kpi-label">Occupancy Rate</div><div class="kpi-trend trend-up">↑ 4% this wk</div></div></div>
-        <div class="kpi-card"><div class="kpi-icon">💰</div><div><div class="kpi-value"><span class="currency-display">${STATE.currency}</span>34,500</div><div class="kpi-label">Revenue Today</div><div class="kpi-trend trend-up">↑ 12% vs yst</div></div></div>
-        <div class="kpi-card"><div class="kpi-icon">🔑</div><div><div class="kpi-value">12 / 15</div><div class="kpi-label">Check-ins Done</div><div class="kpi-trend trend-down">3 Pending</div></div></div>
-        <div class="kpi-card"><div class="kpi-icon">🧹</div><div><div class="kpi-value">6</div><div class="kpi-label">Rooms to Clean</div><div class="kpi-trend trend-up">2 IN PROGRESS</div></div></div>
+        <div class="kpi-card"><div class="kpi-icon">🛏️</div><div><div class="kpi-value">${occupancy}%</div><div class="kpi-label">Occupancy Rate</div><div class="kpi-trend trend-up">${totalRooms} rooms</div></div></div>
+        <div class="kpi-card"><div class="kpi-icon">💰</div><div><div class="kpi-value"><span class="currency-display">${STATE.currency}</span>${totalRevenue.toLocaleString()}</div><div class="kpi-label">Total Revenue</div><div class="kpi-trend trend-up">${DATA.reservations.length} bookings</div></div></div>
+        <div class="kpi-card"><div class="kpi-icon">🔑</div><div><div class="kpi-value">${activeCheckins}</div><div class="kpi-label">Active Guests</div><div class="kpi-trend trend-down">${upcomingCheckins} pending</div></div></div>
+        <div class="kpi-card"><div class="kpi-icon">🧹</div><div><div class="kpi-value">${roomsToClean}</div><div class="kpi-label">Rooms Cleaning</div><div class="kpi-trend trend-up">${occupied} occupied</div></div></div>
     `;
     
     document.getElementById('dashboard-revenue-chart').innerHTML = [40, 65, 45, 80, 50, 95, 70].map((h, i) => 
         `<div class="bar-col" style="height:${h}%;"><div class="bar-val">${h}k</div><div class="bar-label">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'][i]}</div></div>`
     ).join('');
 
+    const available = DATA.rooms.filter(r => r.status === 'available').length;
+    const occupied = DATA.rooms.filter(r => r.status === 'occupied').length;
+    const total = DATA.rooms.length || 1;
+    const occPct = Math.round((occupied / total) * 251.2);
+    const avlPct = Math.round((available / total) * 251.2);
+    
     document.getElementById('dashboard-room-status').innerHTML = `
         <svg viewBox="0 0 100 100" class="donut-svg">
-            <circle cx="50" cy="50" r="40" class="donut-segment" stroke="var(--success)" stroke-dasharray="251.2" stroke-dashoffset="50" title="Available"></circle>
-            <circle cx="50" cy="50" r="40" class="donut-segment" stroke="var(--navy)" stroke-dasharray="251.2" stroke-dashoffset="150" title="Occupied"></circle>
+            <circle cx="50" cy="50" r="40" class="donut-segment" stroke="var(--navy)" stroke-dasharray="251.2" stroke-dashoffset="${251.2 - occPct}" title="Occupied"></circle>
+            <circle cx="50" cy="50" r="40" class="donut-segment" stroke="var(--success)" stroke-dasharray="251.2" stroke-dashoffset="${251.2 - avlPct - occPct}" title="Available"></circle>
         </svg>
-        <div class="donut-center">78%</div>
+        <div class="donut-center">${occupancy}%</div>
     `;
 
     const tb = document.querySelector('#table-dashboard-checkins tbody');

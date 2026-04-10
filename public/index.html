@@ -303,13 +303,22 @@ input:checked + .slider:before { transform: translateX(22px); }
 }
 
 @media (max-width: 768px) {
-  .sidebar { width: var(--swc); }
+  .sidebar { position: fixed; height: 100%; transform: translateX(-100%); transition: transform 0.3s; z-index: 100; }
+  .sidebar.open { transform: translateX(0); }
   .sidebar .hotel-name-display, .sidebar .nav-item .text, .sidebar .user-info, .sidebar .settings-trigger { display: none; }
   .sidebar .nav-label { opacity: 0; height: 0; padding: 0; margin: 0; }
   .sidebar .nav-item { margin: 0; border-radius: 0; justify-content: center; padding: 20px 0; }
   .split-layout { flex-direction: column; }
   .topbar { padding: 0 20px; }
   .page-container { padding: 20px; }
+  .form-grid { grid-template-columns: 1fr; }
+  .col-span-2 { grid-column: span 1; }
+  .kpi-grid { grid-template-columns: 1fr; }
+  .dashboard-grid { grid-template-columns: 1fr; }
+  .rooms-grid { justify-content: center; }
+  .room-tile { min-width: 100px; }
+  .modal-content { width: 95%; max-width: none; margin: 10px; }
+  .table-responsive { overflow-x: auto; }
 }
 
     </style>
@@ -919,7 +928,7 @@ function renderDashboard() {
     tb.innerHTML = DATA.reservations.filter(r => r.status === 'Upcoming' || r.status === 'Active').map(r => `
         <tr><td>${r.guest}</td><td>${r.room}</td><td>${r.source}</td>
         <td><span class="badge badge-${r.status === 'Upcoming' ? 'warning' : 'success'}">${r.status}</span></td>
-        <td><button class="btn btn-outline btn-sm">View</button></td></tr>
+        <td><button class="btn btn-outline btn-sm" onclick="editReservation('${r.ref}')">View</button></td></tr>
     `).join('');
 
     document.getElementById('dashboard-activity').innerHTML = `
@@ -956,7 +965,7 @@ function renderRooms() {
         if(fRooms.length) {
             html += `<h4 class="rooms-floor-label">Floor ${floor}</h4><div class="rooms-grid mb-4">`;
             html += fRooms.map(r => `
-                <div class="room-tile tile-${r.status}" onclick="showToast('Room ${r.num} Details Opened')">
+                <div class="room-tile tile-${r.status}" onclick="openModal('modal-reservation')">
                     <div class="room-num">${r.num}</div><div class="room-type">${r.type}</div>
                     <div class="badge badge-${r.status==='available'?'success':r.status==='occupied'?'info':r.status==='maintenance'?'danger':'warning'} mt-2 p-0 text-center" style="font-size:0.6rem; padding: 2px 6px;">${r.status}</div>
                 </div>
