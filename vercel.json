@@ -1,6 +1,3 @@
 {
-  "buildCommand": "cd havenos-next && npm install && npm run build",
-  "outputDirectory": "havenos-next/.next",
-  "framework": "nextjs",
-  "installCommand": "cd havenos-next && npm install"
+  "framework": "nextjs"
 }
